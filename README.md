@@ -19,7 +19,7 @@ docker run -it --gpus all --name samoyeds-ae kevinwu2017/samoyeds:1.0.0
 ## Reproduction
 
 The hardware requirements for each experiment are as follows:
-- Experiments (1), (2), and (3): These experiments can be conducted on a single GPU, such as the NVIDIA GeForce RTX 4070 Super used in our paper.
+- Experiments (1), (2), (3), and (6): These experiments can be conducted on a single GPU, such as the NVIDIA GeForce RTX 4070 Super used in our paper.
 - Experiment (4): This experiment involves post-training of models, which may require high-end GPUs such as the A100-80G used in our paper.
 - Experiment (5): This experiment analyzes performance portability and requires multiple GPUs with different architectures (e.g., RTX 3090, RTX 4070 Super, RTX 4090, and A100, as used in our paper).
 
