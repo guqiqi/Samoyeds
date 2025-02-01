@@ -13,7 +13,7 @@ Samoyeds requires the following dependencies:
 
 ```shell
 docker pull kevinwu2017/samoyeds:1.0.0
-docker run -it –-gpus all --name samoyeds-ae kevinwu2017/samoyeds:1.0.0
+docker run -it --gpus all --name samoyeds-ae kevinwu2017/samoyeds:1.0.0
 ```
 
 ## Reproduction
