@@ -11,9 +11,17 @@ Samoyeds requires the following dependencies:
 
 ### Build & Install
 
+#### Option 1: pull a pre-built docker image from dockerhub
 ```shell
 docker pull kevinwu2017/samoyeds:1.0.0
 docker run -it --gpus all --name samoyeds-ae kevinwu2017/samoyeds:1.0.0
+```
+
+#### Option 2: build Samoyeds from source code
+```shell
+git clone --recurse-submodules https://github.com/guqiqi/Samoyeds.git
+cd Samoyeds
+./build.sh
 ```
 
 ## Reproduction
