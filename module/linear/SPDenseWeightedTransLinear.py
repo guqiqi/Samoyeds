@@ -1,0 +1,50 @@
+import torch.nn as nn
+import torch
+
+from module.util import sparsifier, N, M, vector_length, padding_weight
+import samoyeds_kernel
+
+def sparse_dense_mul_transpose_dense_weighted_dispatch(A_sparse_values, A_sparse_indices, A_sparse_metadata,
+                                                B_values, routing_weights, m, k, n):
+    output = samoyeds_kernel.spmm_weighted_dense_trans(A_sparse_values,  # lhs_matrix, compressed values
+                                                A_sparse_indices,  # indices
+                                                A_sparse_metadata,  # metadata
+                                                B_values,  # rhs_matrix, sparse inputs
+                                                routing_weights,
+                                                m,  # m
+                                                k,  # k
+                                                n,  # n
+                                                vector_length,  # vector_length
+                                                N,  # structure_N
+                                                M,  # structure_M
+                                                )
+
+    return output
+
+class SPDenseWeightedLinear(nn.Module):
+    def __init__(self, original = None, in_features = 1024, out_features = 4096):
+        super().__init__()
+        if original is None:
+            self.in_features = in_features
+            self.out_features = out_features
+            self.weight, self.indices, self.metadata = sparsifier(nn.Parameter(torch.rand(out_features, in_features)))
+        else:
+            self.bias = original.bias
+            self.in_features = original.in_features
+            self.out_features = original.out_features
+            self.weight, self.indices, self.metadata = sparsifier(original.weight)
+
+        self.weight = nn.Parameter(self.weight)
+        self.indices = nn.Parameter(self.indices, requires_grad=False)
+        self.metadata = nn.Parameter(self.metadata, requires_grad=False)
+
+    def forward(self, input, routing_weights):
+        routing_weights = padding_weight(routing_weights, 64)
+        return sparse_dense_mul_transpose_dense_weighted_dispatch(self.weight, self.indices, self.metadata, input, routing_weights, 
+                                          self.weight.shape[0] * 2,
+                                          self.weight.shape[1] * 2, input.shape[0])
+
+    def extra_repr(self) -> str:
+        return 'in_features={}, out_features={}, bias={}'.format(
+            self.in_features, self.out_features, self.bias is not None
+        )

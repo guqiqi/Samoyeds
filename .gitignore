@@ -1,0 +1,12 @@
+__pycache__
+build/
+*.egg-info/
+.idea/
+.vscode/
+*.egg
+cmake-build-debug/
+outputs/
+csv_dir/
+*compile_cache/
+*.uuid
+venv/

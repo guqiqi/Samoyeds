@@ -1,0 +1,10 @@
+[submodule "sparseml"]
+	path = sparseml
+	url = https://github.com/guqiqi/SamoyedsSparseml.git
+	branch = acc_evaluation
+[submodule "Samoyeds-Kernel"]
+	path = Samoyeds-Kernel
+	url = https://github.com/guqiqi/Samoyeds-Kernel.git
+[submodule "third_party/ColossalAI"]
+	path = third_party/ColossalAI
+	url = https://github.com/Orion-Zheng/ColossalAI.git
