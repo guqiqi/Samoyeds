@@ -12,9 +12,8 @@ cd ..
 
 #########################################################################################
 # build Samoyeds Model Executor
-# create venv
-python3.10 -m venv venv
-source venv/bin/activate
+
+pip install torch==2.1.2
 
 # install dependencies
 pip install -r requirements.txt

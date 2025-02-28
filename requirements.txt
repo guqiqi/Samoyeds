@@ -1,7 +1,7 @@
 pybind11
-stanford_stk==0.7.0
 
 torch==2.1.2
+stanford_stk==0.7.0
 
 transformers==4.40.0
 vllm==0.4.0.post1

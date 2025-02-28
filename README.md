@@ -21,6 +21,10 @@ docker run -it --gpus all --name samoyeds-ae kevinwu2017/samoyeds:1.0.0
 ```shell
 git clone --recurse-submodules https://github.com/guqiqi/Samoyeds.git
 cd Samoyeds
+
+conda create --name samoyeds python=3.10
+conda activate samoyeds
+
 ./build.sh
 ```
 
