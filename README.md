@@ -1,5 +1,10 @@
 # Samoyeds: Accelerating MoE Models with Structured Sparsity Leveraging Sparse Tensor Cores (EuroSys'25)
-``Samoyeds`` is an innovative acceleration system for MoE LLMs utilizing Sparse Tensor Cores (SpTCs).
+
+This repository contains the implementation of **Samoyeds**, an innovative acceleration system for MoE LLMs utilizing Sparse Tensor Cores (SpTCs). Our work has been published at EuroSys'25.
+
+Samoyeds is the first to apply sparsity simultaneously to both activations and model parameters. It introduces a bespoke sparse data format tailored for MoE computation and develops a specialized sparse-sparse matrix multiplication kernel. Furthermore, Samoyeds incorporates systematic optimizations specifically designed for the execution of dual-side structured sparse MoE LLMs on SpTCs, further enhancing system performance.
+
+**Paper**: [Samoyeds: Accelerating MoE Models with Structured Sparsity Leveraging Sparse Tensor Cores](https://dl.acm.org/doi/10.1145/3689031.3717455)
 
 ## Install
 
@@ -28,95 +33,49 @@ conda activate samoyeds
 ./build.sh
 ```
 
-## Reproduction
+### Run
 
-The hardware requirements for each experiment are as follows:
-- Experiments (1), (2), (3), and (6): These experiments can be conducted on a single GPU, such as the NVIDIA GeForce RTX 4070 Super used in our paper.
-- Experiment (4): This experiment involves post-training of models, which may require high-end GPUs such as the A100-80G used in our paper.
-- Experiment (5): This experiment analyzes performance portability and requires multiple GPUs with different architectures (e.g., RTX 3090, RTX 4070 Super, RTX 4090, and A100, as used in our paper).
+#### Dual-Sparse Kernel
 
-
-#### (1) To reproduce the kernel level results (Figure 12, 13)
-
+Run SSMM kernel with the Mixtral model config:
 ```shell
-./artifacts/kernel/synthetic_scripts.sh
-./artifacts/kernel/kernel_model_config_scripts.sh
+./Samoyeds-Kernel/build/benchmark/benchmark -m 14336 -n 4096 -k 4096 -N 1 -M 2 --vector_length 128 --method SSMM
 ```
 
-The plotting scripts are located at:
+#### MoE Module
 
-- ``./artifacts/kernel/figure12_plot.ipynb``
-
-- ``./artifacts/kernel/figure13_plot.ipynb``
-
-After executing these scripts, you can generate the corresponding figures using our provided code.
-
-#### (2) To reproduce the MoE module level results (Figure 14)
+Run Samoyeds MoE module with Mixtral model config:
 ```shell
-./artifacts/MoE/figure14_scripts.sh
+python mixtral_Samoyeds.py --time --batch_size 1 --mlp --experts 8 --hidden_size 4096 --intermediate_size 14336 --seq_len 4096
 ```
 
-The plotting script is located at:
+#### End-to-End
 
-- ``./artifacts/MoE/figure14_plot.ipynb``
-
-After executing the script, you can generate the corresponding figure using our provided code.
-
-#### (3) To reproduce the end-to-end level results (Figure 15, 16)
+Run Samoyeds with Mixtral model config:
 ```shell
-./artifacts/model/figure15_scripts.sh
-./artifacts/model/figure16_scripts.sh
-```
-The plotting scripts are located at:
-
-- ``./artifacts/model/figure15_plot.ipynb``
-
-- ``./artifacts/model/figure16_plot.ipynb``
-
-After executing these scripts, you can generate the corresponding figures using our provided code.
-
-#### (4) To reproduce the breakdown analysis results (Figure 17)
-
-```shell
-./artifacts/MoE/figure17_scripts.sh
+python mixtral_Samoyeds.py --time --batch_size 1 --layer --flash --experts 8 --hidden_size 4096 --intermediate_size 14336
 ```
 
-The plotting script is located at:
+## LICENCE
 
-- ``./artifacts/MoE/figure17_plot.ipynb``
+This project is licensed under the Apache License 2.0. See the [LICENCE](./LICENCE) file for details.
 
-After executing the script, you can generate the corresponding figure using our provided code.
+## Citation
 
-#### (5) To reproduce the results of model accuracy (Table 4, 5)
+If you use Samoyeds in your research, please cite our paper:
 
-The scripts includes experiments with configurations using the pair-wise version of the sparsifier.
-
-> The following scripts require execution on high-memory GPUs or multi-GPU configurations. Specifically:
-> - The script for collecting data in Table 4 is configured to utilize a cluster of 4 GPUs.
-> - The scripts for collecting data in Table 5 must be run on an NVIDIA A100 80GB GPU to avoid Out-Of-Memory (OOM) errors. Lower-capacity GPUs may not have sufficient memory to handle these operations.
-
-```shell
-cd sparseml
-# Table 4
-bach benchmark/scripts/samoyeds_gradual_pair.sh
-# Table 5
-bash benchmark/scripts/samoyeds_qwen2_80G.sh
-bash benchmark/scripts/samoyeds_tiny_llama_80G.sh
-```
-The results are stored in the ``benchmark/output_dir/`` directory.
-
-#### (6) To reproduce the performance portability results of Samoyeds (Figure 18)
-
-> To plot figure 18, the following script need to run on multiple GPUs, including NVIDIA GeForce RTX 3070, NVIDIA GeForce RTX 4070 Super, NVIDIA GeForce RTX 4090, and NVIDIA A100. 
-
-```shell
-./artifacts/kernel/synthetic_scripts.sh
+```bibtex
+@inproceedings{2025samoyeds,
+  title={Samoyeds: Accelerating MoE Models with Structured Sparsity Leveraging Sparse Tensor Cores},
+  author={Wu, Chenpeng and Gu, Qiqi and Shi, Heng and Yao, Jianguo and Guan, Haibing},
+  booktitle={Proceedings of the Twentieth European Conference on Computer Systems},
+  pages={293--310},
+  year={2025}
+}
 ```
 
-> Figure 18 can be reproduced by collecting results on different GPUs into ``./artifacts/results/kernel/`` folder.
+## Contact
 
-The plotting script is located at:
-
-- ``./artifacts/kernel/figure18_plot.ipynb``
-
-After executing the script, you can generate the corresponding figure using our provided code.
+For questions or collaboration, please feel free to contact:
+- [cpwu_sjtu@sjtu.edu.cn](mailto:cpwu_sjtu@sjtu.edu.cn)
+- [qiqi.gu@sjtu.edu.cn](mailto:qiqi.gu@sjtu.edu.cn)
